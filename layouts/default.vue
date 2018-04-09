@@ -1,0 +1,49 @@
+<template>
+  <v-app>
+    <v-navigation-drawer fixed temporary app v-model="sideNav" >
+      <v-list>
+        <v-list-tile :to="item.to" v-for="(item,index) in menuItems" :key="index">
+          <v-list-tile-action>
+            <v-icon>{{item.icon}}</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>{{item.title}}</v-list-tile-content>
+        </v-list-tile>
+      </v-list>
+    </v-navigation-drawer>
+    <v-toolbar color="red accent-2">
+      <v-toolbar-side-icon @click.stop="sideNav = !sideNav" class="hidden-sm-and-up"></v-toolbar-side-icon>
+      <v-toolbar-title>
+      <nuxt-link to="/" tag="span" style="cursor: pointer">Meet Up</nuxt-link>
+      </v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-toolbar-items class="hidden-xs-only">
+        <v-btn flat :to ="item.to" v-for="(item, index) in menuItems" :key="index">
+          <v-icon left>{{item.icon}}</v-icon>
+          {{item.title}}
+          </v-btn>
+      </v-toolbar-items>
+    </v-toolbar>
+    <v-content>
+      <v-container>
+        <nuxt />
+    </v-container>
+    </v-content>
+  </v-app>
+</template>
+
+<script>
+  export default {
+    data() {
+      return {
+        sideNav: false,
+        menuItems: [
+          { icon: 'supervisor_account', title: 'View Meetups', to: '/'},
+          { icon: 'room', title: 'Organize Meetup', to: '/meetup'},
+          { icon: 'person', title: 'Profile', to: '/user'},
+          { icon: 'face', title: 'Sign up', to: '/signup'},
+          { icon: 'lock_open', title: 'Sign in', to: '/signin'},
+        ]
+      }
+    }
+  }
+</script>
