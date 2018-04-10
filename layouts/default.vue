@@ -13,7 +13,7 @@
     <v-toolbar color="red accent-2">
       <v-toolbar-side-icon @click.stop="sideNav = !sideNav" class="hidden-sm-and-up"></v-toolbar-side-icon>
       <v-toolbar-title>
-      <nuxt-link to="/" tag="span" style="cursor: pointer">Meet Up</nuxt-link>
+      <nuxt-link to="/" tag="span" style="cursor: pointer">MeetUp</nuxt-link>
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items class="hidden-xs-only">
@@ -36,14 +36,26 @@
     data() {
       return {
         sideNav: false,
-        menuItems: [
+      }
+    },
+    computed: {
+      menuItems () {
+        let menuItems = [
+          { icon: 'face', title: 'Sign up', to: '/signup'},
+          { icon: 'lock_open', title: 'Sign in', to: '/signin'}
+        ]
+        if (this.userIsAuthenticated) {
+          menuItems = [
           { icon: 'supervisor_account', title: 'View Meetups', to: '/'},
           { icon: 'room', title: 'Organize Meetup', to: '/meetup'},
-          { icon: 'person', title: 'Profile', to: '/user'},
-          { icon: 'face', title: 'Sign up', to: '/signup'},
-          { icon: 'lock_open', title: 'Sign in', to: '/signin'},
+          { icon: 'person', title: 'Profile', to: '/user'}
         ]
-      }
+        }
+        return menuItems
+      },
+    userIsAuthenticated () {
+      return this.$store.getters['meetup/user'] !== null && this.$store.getters['meetup/user'] !== undefined
+    }
     }
   }
 </script>

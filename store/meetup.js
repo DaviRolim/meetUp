@@ -1,4 +1,5 @@
 import lodash from 'lodash'
+import firebase from 'firebase'
 export const state = () => ({
   loadedMeetups: [
     {
@@ -18,10 +19,7 @@ export const state = () => ({
       description: 'BEst place ever.'
     }
   ],
-  user: {
-    id: '',
-    registeredMeetups: ['simpleId']
-  }
+  user: null
 })
 export const getters = {
   getLoadedMeetups(state) {
@@ -37,18 +35,50 @@ export const getters = {
     return (meetupId) => {
       return state.loadedMeetups.find(meetup => meetup.id === meetupId)
     }
+  },
+  user(state) {
+    return state.user
   }
 }
 
 export const mutations = {
   createMeetup(state, payload) {
     state.loadedMeetups.push(payload)
+  },
+  setUser(state, payload) {
+    state.user = payload
   }
 }
 
 export const actions = {
   createMeetup({ commit }, payload) {
     commit('createMeetup', payload)
+  },
+  signUserUp({ commit }, payload) {
+    firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
+      .then(user => {
+        const newUser = {
+          id: user.uid,
+          registeredMeetups: []
+        }
+        commit('setUser', newUser)
+      })
+      .catch(error => {
+        console.log(error)
+      })
+  },
+  signUserIn({ commit }, payload) {
+    firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
+      .then(user => {
+        const newUser = {
+          id: user.uid,
+          registeredMeetups: []
+        }
+        commit('setUser', newUser)
+      })
+      .catch(error => {
+        console.log(error)
+      })
   }
 }
 
