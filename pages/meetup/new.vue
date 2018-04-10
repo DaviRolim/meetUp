@@ -94,6 +94,7 @@
 import {mapActions} from 'vuex'
 
 export default {
+  middleware: 'auth-guard',
   data () {
     return {
       meetup: {

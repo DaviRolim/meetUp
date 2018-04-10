@@ -84,7 +84,8 @@ export const actions = {
           description: obj[key].descripton,
           imageUrl: obj[key].imageUrl,
           date: obj[key].date,
-          location: obj[key].location
+          location: obj[key].location,
+          creatorId: obj[key].creatorId
         })
       }
       commit('setLoadedMeetups', meetups)
@@ -95,13 +96,14 @@ export const actions = {
       console.log(error)
     })
   },
-  createMeetup({ commit }, payload) {
-    firebase.database().ref('meetups').push(payload)
+  createMeetup({ commit, getters }, payload) {
+    firebase.database().ref('meetups').push({...payload, creatorId: getters.user.id})
     .then((data) => {
       const key = data.key
       commit('createMeetup', {
         ...payload,
-        id: key
+        id: key,
+        creatorId: getters.user.id
       })
     })
     .catch((error) => {
@@ -143,6 +145,13 @@ export const actions = {
         commit('setError', error)
         console.log(error)
       })
+  },
+  autoSignin ({commit}, payload) {
+    commit('setUser', {id: payload.uid, registeredMeetups: []})
+  },
+  logout({commit}) {
+    firebase.auth().signOut()
+    commit('setUser', null)
   },
   clearError({ commit }, payload) {
     commit('clearError')

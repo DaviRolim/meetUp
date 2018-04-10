@@ -8,6 +8,12 @@
           </v-list-tile-action>
           <v-list-tile-content>{{item.title}}</v-list-tile-content>
         </v-list-tile>
+        <v-list-tile v-if="userIsAuthenticated" @click="onLogout">
+          <v-list-tile-action>
+            <v-icon>exit_to_app</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>Logout</v-list-tile-content>
+        </v-list-tile>
       </v-list>
     </v-navigation-drawer>
     <v-toolbar color="red accent-2">
@@ -20,7 +26,11 @@
         <v-btn flat :to ="item.to" v-for="(item, index) in menuItems" :key="index">
           <v-icon left>{{item.icon}}</v-icon>
           {{item.title}}
-          </v-btn>
+        </v-btn>
+        <v-btn flat v-if="userIsAuthenticated" @click="onLogout">
+          <v-icon left>exit_to_app</v-icon>
+          Logout
+        </v-btn>
       </v-toolbar-items>
     </v-toolbar>
     <v-content>
@@ -58,7 +68,18 @@
     }
     },
     created () {
+      this.$auth.onAuthStateChanged((user) => {
+        if(user) {
+          this.$store.dispatch('meetup/autoSignin', user)
+        }
+      })
       this.$store.dispatch('meetup/loadMeetups')
+    },
+    methods: {
+      onLogout () {
+        this.$store.dispatch('meetup/logout')
+        this.$router.push('/signin')
+      }
     }
   }
 </script>

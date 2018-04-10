@@ -46,6 +46,9 @@ module.exports = {
     '@/plugins/firebase',
     '@/plugins/components'
   ],
+  // router : {
+  //   middleware: 'auth-guard'
+  // },
 
   /*
   ** Nuxt.js modules
