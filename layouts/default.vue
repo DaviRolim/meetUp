@@ -56,6 +56,9 @@
     userIsAuthenticated () {
       return this.$store.getters['meetup/user'] !== null && this.$store.getters['meetup/user'] !== undefined
     }
+    },
+    created () {
+      this.$store.dispatch('meetup/loadMeetups')
     }
   }
 </script>

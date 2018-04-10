@@ -8,7 +8,12 @@
       <v-btn large to="/meetup/new" class="success">Organize MeetUps</v-btn>
     </v-flex>
   </v-layout>
-  <v-layout class="mt-2">
+  <v-layout>
+    <v-flex xs12 class="text-xs-center">
+      <v-progress-circular indeterminate color="red" :width="15" :size="20" v-if="loading"></v-progress-circular>
+    </v-flex>
+  </v-layout>
+  <v-layout class="mt-2" v-if="!loading">
     <v-flex xs12>
       <v-carousel>
         <v-carousel-item v-for="(meetup,i) in meetups" :src="meetup.imageUrl" :key="i"
@@ -34,7 +39,10 @@ export default {
   computed: {
     ...mapGetters({
       meetups: 'meetup/featuredMeetups'
-    })
+    }),
+    loading () {
+      return this.$store.getters['meetup/loading']
+    }
   },
   methods: {
     onLoadMeetup (id) {

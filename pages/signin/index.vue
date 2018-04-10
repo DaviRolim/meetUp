@@ -53,7 +53,7 @@
 </template>
 
 <script>
-import {mapActions} from 'vuex'
+import {mapActions, mapGetters} from 'vuex'
 export default {
   data () {
     return {
@@ -62,15 +62,20 @@ export default {
     }
   },
   computed: {
-    user (value) {
-      return this.$store.getters['meetup/user']
-    },
-    error () {
-      return this.$store.getters['meetup/error']
-    },
-    loading () {
-      return this.$store.getters['meetup/loading']
-    }
+    ...mapGetters('meetup',[
+      'user',
+      'error',
+      'loading'
+    ])
+    // user (value) {
+    //   return this.$store.getters['meetup/user']
+    // },
+    // error () {
+    //   return this.$store.getters['meetup/error']
+    // },
+    // loading () {
+    //   return this.$store.getters['meetup/loading']
+    // }
   },
   watch: {
    user (value) {
@@ -92,3 +97,41 @@ export default {
   }
 }
 </script>
+<style>
+  .custom-loader {
+    animation: loader 1s infinite;
+    display: flex;
+  }
+  @-moz-keyframes loader {
+    from {
+      transform: rotate(0);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @-webkit-keyframes loader {
+    from {
+      transform: rotate(0);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @-o-keyframes loader {
+    from {
+      transform: rotate(0);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes loader {
+    from {
+      transform: rotate(0);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  </style>

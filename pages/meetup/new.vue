@@ -71,8 +71,7 @@
     </v-layout>
     <v-layout row>
       <v-flex xs12 sm6 offset-sm3>
-         <v-time-picker v-model="meetup.time" format="24hr"></v-time-picker>
-         <p>{{ meetup.time }}</p>
+         <v-time-picker v-model="time" format="24hr"></v-time-picker>
       </v-flex>
     </v-layout>
     <v-layout row>
@@ -102,9 +101,9 @@ export default {
         imageUrl: '',
         description: '',
         location: '',
-        date: '',
+        date: ''
+      },
         time: ''
-      }
     }
   },
   computed : {
@@ -116,8 +115,8 @@ export default {
     },
     submittableDateTime () {
       const date = new Date(this.meetup.date)
-      const hours = this.meetup.time.split(':')[0]
-      const minutes = this.meetup.time.match(/:(\d+)/)
+      const hours = this.time.split(':')[0]
+      const minutes = this.time.match(/:(\d+)/)
       if (minutes) {
         date.setHours(hours)
         date.setMinutes(minutes[1])
@@ -130,8 +129,7 @@ export default {
     'createMeetup'
     ]),
   onCreateMeetup () {
-    this.meetup.date = this.submittableDateTime
-    this.$db.ref('meetup').push(this.meetup)
+    this.meetup.date = this.submittableDateTime.toISOString()
     this.createMeetup(this.meetup) 
     this.$router.push('/meetup')
   }

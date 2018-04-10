@@ -64,12 +64,49 @@ export const mutations = {
   },
   clearError(state) {
     state.authError = null
+  },
+  setLoadedMeetups(state, payload) {
+    state.loadedMeetups = payload
   }
 }
 
 export const actions = {
+  loadMeetups ({commit}) {
+    commit('setLoading', true)
+    firebase.database().ref('meetups').once('value')
+    .then((data) => {
+      const meetups = []
+      const obj = data.val()
+      for (let key in obj) {
+        meetups.push({
+          id: key,
+          title: obj[key].title,
+          description: obj[key].descripton,
+          imageUrl: obj[key].imageUrl,
+          date: obj[key].date,
+          location: obj[key].location
+        })
+      }
+      commit('setLoadedMeetups', meetups)
+      commit('setLoading', false)
+    })
+    .catch((error) => {
+      commit('setLoading', false)
+      console.log(error)
+    })
+  },
   createMeetup({ commit }, payload) {
-    commit('createMeetup', payload)
+    firebase.database().ref('meetups').push(payload)
+    .then((data) => {
+      const key = data.key
+      commit('createMeetup', {
+        ...payload,
+        id: key
+      })
+    })
+    .catch((error) => {
+      console.log(error)
+    })
   },
   signUserUp({ commit }, payload) {
     commit('setLoading', true)
@@ -94,7 +131,7 @@ export const actions = {
     commit('clearError')
     firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
       .then(user => {
-        commit('setLoading', true)
+        commit('setLoading', false)
         const newUser = {
           id: user.uid,
           registeredMeetups: []
