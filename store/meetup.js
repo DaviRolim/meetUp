@@ -19,7 +19,9 @@ export const state = () => ({
       description: 'BEst place ever.'
     }
   ],
-  user: null
+  user: null,
+  loading: false,
+  authError: null
 })
 export const getters = {
   getLoadedMeetups(state) {
@@ -38,6 +40,12 @@ export const getters = {
   },
   user(state) {
     return state.user
+  },
+  error(state) {
+    return state.authError
+  },
+  loading(state) {
+    return state.loading
   }
 }
 
@@ -47,6 +55,15 @@ export const mutations = {
   },
   setUser(state, payload) {
     state.user = payload
+  },
+  setLoading(state, payload) {
+    state.loading = payload
+  },
+  setError(state, payload) {
+    state.authError = payload
+  },
+  clearError(state) {
+    state.authError = null
   }
 }
 
@@ -55,8 +72,11 @@ export const actions = {
     commit('createMeetup', payload)
   },
   signUserUp({ commit }, payload) {
+    commit('setLoading', true)
+    commit('clearError')
     firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
       .then(user => {
+        commit('setLoading', false)
         const newUser = {
           id: user.uid,
           registeredMeetups: []
@@ -64,12 +84,17 @@ export const actions = {
         commit('setUser', newUser)
       })
       .catch(error => {
+        commit('setLoading', false)
+        commit('setError', error)
         console.log(error)
       })
   },
   signUserIn({ commit }, payload) {
+    commit('setLoading', true)
+    commit('clearError')
     firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
       .then(user => {
+        commit('setLoading', true)
         const newUser = {
           id: user.uid,
           registeredMeetups: []
@@ -77,8 +102,13 @@ export const actions = {
         commit('setUser', newUser)
       })
       .catch(error => {
+        commit('setLoading', false)
+        commit('setError', error)
         console.log(error)
       })
+  },
+  clearError({ commit }, payload) {
+    commit('clearError')
   }
 }
 

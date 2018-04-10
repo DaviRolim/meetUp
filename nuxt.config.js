@@ -43,7 +43,8 @@ module.exports = {
   plugins: [
     '@/plugins/vuetify',
     '@/plugins/filters',
-    '@/plugins/firebase'
+    '@/plugins/firebase',
+    '@/plugins/components'
   ],
 
   /*
