@@ -5,6 +5,10 @@
         <v-card>
           <v-card-title>
             <h4 class="red--text">{{meetup.title}}</h4>
+            <template v-if="userIsCreator">
+              <v-spacer></v-spacer>
+              <edit-meetup></edit-meetup>
+            </template>
           </v-card-title>
           <v-card-media 
                :src="meetup.imageUrl"
@@ -32,9 +36,18 @@ export default {
   // ...mapGetters({
   //   meetup: 'meetup/getLoadedMeetup'
   //   })
-  meetup () {
-    return this.$store.getters['meetup/getLoadedMeetup'](this.$route.params.id)
-  }
+    meetup () {
+      return this.$store.getters['meetup/getLoadedMeetup'](this.$route.params.id)
+    },
+    userIsAuthenticated () {
+      return this.$store.getters['meetup/user'] !== null && this.$store.getters['meetup/user'] !== undefined
+    },
+    userIsCreator () {
+      if (!this.userIsAuthenticated) {
+        return false;
+      }
+    return this.$store.getters['meetup/user'].id === this.meetup.creatorId
+    }
   }
 }
 </script>

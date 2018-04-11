@@ -71,44 +71,59 @@ export const mutations = {
 }
 
 export const actions = {
-  loadMeetups ({commit}) {
+  loadMeetups({ commit }) {
     commit('setLoading', true)
     firebase.database().ref('meetups').once('value')
-    .then((data) => {
-      const meetups = []
-      const obj = data.val()
-      for (let key in obj) {
-        meetups.push({
-          id: key,
-          title: obj[key].title,
-          description: obj[key].descripton,
-          imageUrl: obj[key].imageUrl,
-          date: obj[key].date,
-          location: obj[key].location,
-          creatorId: obj[key].creatorId
-        })
-      }
-      commit('setLoadedMeetups', meetups)
-      commit('setLoading', false)
-    })
-    .catch((error) => {
-      commit('setLoading', false)
-      console.log(error)
-    })
+      .then((data) => {
+        const meetups = []
+        const obj = data.val()
+        for (let key in obj) {
+          meetups.push({
+            id: key,
+            title: obj[key].title,
+            description: obj[key].description,
+            imageUrl: obj[key].imageUrl,
+            date: obj[key].date,
+            location: obj[key].location,
+            creatorId: obj[key].creatorId
+          })
+        }
+        commit('setLoadedMeetups', meetups)
+        commit('setLoading', false)
+      })
+      .catch((error) => {
+        commit('setLoading', false)
+        console.log(error)
+      })
   },
   createMeetup({ commit, getters }, payload) {
-    firebase.database().ref('meetups').push({...payload, creatorId: getters.user.id})
-    .then((data) => {
-      const key = data.key
-      commit('createMeetup', {
-        ...payload,
-        id: key,
-        creatorId: getters.user.id
+    let imageUrl
+    let key
+    firebase.database().ref('meetups').push({ ...payload, creatorId: getters.user.id })
+      .then((data) => {
+        key = data.key
+        return key
       })
-    })
-    .catch((error) => {
-      console.log(error)
-    })
+      .then(key => {
+        const filename = payload.image.name
+        const ext = filename.slice(filename.lastIndexOf('.'))
+        return firebase.storage().ref('meetups/' + key + '.' + ext).put(payload.image) // for files use put instead of push
+      })
+      .then(fileData => {
+        imageUrl = fileData.metadata.downloadURLs[0]
+        return firebase.database().ref('meetups').child(key).update({ imageUrl: imageUrl })
+      })
+      .then(() => {
+        commit('createMeetup', {
+          ...payload,
+          id: key,
+          creatorId: getters.user.id,
+          imageUrl: imageUrl
+        })
+      })
+      .catch((error) => {
+        console.log(error)
+      })
   },
   signUserUp({ commit }, payload) {
     commit('setLoading', true)
@@ -146,10 +161,10 @@ export const actions = {
         console.log(error)
       })
   },
-  autoSignin ({commit}, payload) {
-    commit('setUser', {id: payload.uid, registeredMeetups: []})
+  autoSignin({ commit }, payload) {
+    commit('setUser', { id: payload.uid, registeredMeetups: [] })
   },
-  logout({commit}) {
+  logout({ commit }) {
     firebase.auth().signOut()
     commit('setUser', null)
   },

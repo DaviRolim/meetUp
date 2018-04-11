@@ -12,7 +12,7 @@
         <v-flex xs12 sm6 offset-sm3>
           <v-text-field 
           name="title"
-          :rules="[() => meetup.title.length > 0 || 'This field is required', () => meetup.title.length < 20 || 'Title is too big']"
+          :rules="[() => meetup.title.length > 0 || 'This field is required', () => meetup.title.length < 50 || 'Title is too big']"
           label="Title"
           id="title"
           v-model="meetup.title"
@@ -23,7 +23,7 @@
         <v-flex xs12 sm6 offset-sm3>
           <v-text-field 
           name="location"
-          :rules="[() => meetup.location.length > 0 || 'This field is required', () => meetup.location.length < 20 || 'location is too big']"
+          :rules="[() => meetup.location.length > 0 || 'This field is required', () => meetup.location.length < 50 || 'location is too big']"
           label="Location"
           id="location"
           v-model="meetup.location"
@@ -32,25 +32,25 @@
   </v-layout>
   <v-layout row>
         <v-flex xs12 sm6 offset-sm3>
-          <v-text-field 
-          name="imageUrl"
-          :rules="[() => meetup.imageUrl.length > 0 || 'This field is required', () => meetup.imageUrl.length < 200 || 'imageUrl is too big']"
-          label="Image Url"
-          id="imageUrl"
-          v-model="meetup.imageUrl"
-          required></v-text-field>
+          <v-btn dark raised class="red" @click="onPickFile">Upload Image</v-btn>
+          <input 
+          type="file" 
+          style="display: none" 
+          ref="fileInput" 
+          accept="image/*"
+          @change="onFilePicked">
         </v-flex>
   </v-layout>
   <v-layout row>
     <v-flex xs12 sm6 offset-sm3>
-      <img :src="meetup.imageUrl" height="150">
+      <img :src="imageUrl" height="150">
     </v-flex>
   </v-layout>
   <v-layout row>
         <v-flex xs12 sm6 offset-sm3>
           <v-text-field 
           name="description"
-          :rules="[() => meetup.description.length > 0 || 'This field is required', () => meetup.description.length < 200 || 'description is too big']"
+          :rules="[() => meetup.description.length > 0 || 'This field is required']"
           label="Description"
           multi-line
           id="description"
@@ -99,11 +99,12 @@ export default {
     return {
       meetup: {
         title: '',
-        imageUrl: '',
         description: '',
         location: '',
-        date: ''
+        date: '',
+        image: null
       },
+        imageUrl: '',
         time: ''
     }
   },
@@ -111,7 +112,7 @@ export default {
     formIsValid () {
       return this.meetup.title !== '' && 
       this.meetup.location !== '' && 
-      this.meetup.imageUrl !== '' && 
+      this.imageUrl !== '' && 
       this.meetup.description !== ''
     },
     submittableDateTime () {
@@ -126,14 +127,35 @@ export default {
     }
   },
   methods: {
-  ...mapActions('meetup', [
-    'createMeetup'
-    ]),
-  onCreateMeetup () {
-    this.meetup.date = this.submittableDateTime.toISOString()
-    this.createMeetup(this.meetup) 
-    this.$router.push('/meetup')
+    ...mapActions('meetup', [
+      'createMeetup'
+      ]),
+    onCreateMeetup () {
+      if(!this.meetup.image) {
+        return
+      }
+      this.meetup.date = this.submittableDateTime.toISOString()
+      this.createMeetup(this.meetup) 
+      this.$router.push('/meetup')
+    },
+    onPickFile () {
+      this.$refs.fileInput.click()
+    },
+    onFilePicked (event) {
+      const file = event.target.files
+      let name = file[0].name
+      if (name.lastIndexOf('.') <= 0) {
+        return alert('Please add a valid file!')
+      }
+      console.log(name)
+      const fileReader = new FileReader()
+      fileReader.addEventListener('load',() => {
+        this.imageUrl = fileReader.result //the result is base64
+      })
+      fileReader.readAsDataURL(file[0])
+      this.meetup.image = file[0]
+      console.log(this.imageUrl)
+    }
   }
-  },
 }
 </script>
