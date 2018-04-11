@@ -1,4 +1,6 @@
 const pkg = require('./package')
+require('dotenv').config()
+console.log(process.env)
 
 const nodeExternals = require('webpack-node-externals')
 
@@ -55,7 +57,8 @@ module.exports = {
   */
   modules: [
     // Doc: https://github.com/nuxt-community/axios-module#usage
-    '@nuxtjs/axios'
+    '@nuxtjs/axios',
+    '@nuxtjs/dotenv'
   ],
 
   /*

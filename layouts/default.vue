@@ -74,6 +74,9 @@
         }
       })
       this.$store.dispatch('meetup/loadMeetups')
+      console.log(this)
+      console.log(this.context)
+      console.log(this.process)
     },
     methods: {
       onLogout () {

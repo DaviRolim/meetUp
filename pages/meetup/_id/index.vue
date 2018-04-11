@@ -1,13 +1,18 @@
 <template>
   <v-container>
-    <v-layout row wrap>
+    <v-layout row wrap v-if="loading">
+      <v-flex xs12 class="text-xs-center">
+        <v-progress-circular indeterminate color="red" :width="7" :size="70"></v-progress-circular>
+      </v-flex>
+    </v-layout>
+    <v-layout row wrap v-else>
       <v-flex xs12>
         <v-card>
           <v-card-title>
             <h4 class="red--text">{{meetup.title}}</h4>
             <template v-if="userIsCreator">
               <v-spacer></v-spacer>
-              <edit-meetup></edit-meetup>
+              <edit-meetup :meetup="meetup"></edit-meetup>
             </template>
           </v-card-title>
           <v-card-media 
@@ -36,6 +41,9 @@ export default {
   // ...mapGetters({
   //   meetup: 'meetup/getLoadedMeetup'
   //   })
+    loading () {
+        return this.$store.getters['meetup/loading']
+    },
     meetup () {
       return this.$store.getters['meetup/getLoadedMeetup'](this.$route.params.id)
     },
