@@ -101,12 +101,16 @@ export default {
         title: '',
         description: '',
         location: '',
-        date: '',
+        date: null,
         image: null
       },
         imageUrl: '',
         time: ''
     }
+  },
+  created () {
+    console.log(this.meetup.date)
+    console.log(this.time)
   },
   computed : {
     formIsValid () {

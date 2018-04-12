@@ -21,12 +21,15 @@
           ></v-card-media>
           <v-card-text>
             <div class="info--text">{{meetup.date | date }} - {{meetup.location}}</div>
+            <div>
+              <edit-meetup-date :meetup="meetup" v-if="userIsCreator"></edit-meetup-date>
+              <edit-meetup-time :meetup="meetup" v-if="userIsCreator"></edit-meetup-time>
+            </div>
             <div>{{meetup.description}}</div>
              </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn flat dark class="red accent-2">Register</v-btn>
-
+            <register-dialog :meetupId="meetup.id"></register-dialog>
           </v-card-actions>
         </v-card>
       </v-flex>

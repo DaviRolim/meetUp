@@ -10,7 +10,7 @@
   </v-layout>
   <v-layout>
     <v-flex xs12 class="text-xs-center">
-      <v-progress-circular indeterminate color="red" :width="9" :size="70" v-if="loading"></v-progress-circular>
+      <v-progress-circular indeterminate color="red" :width="7" :size="70" v-if="loading"></v-progress-circular>
     </v-flex>
   </v-layout>
   <v-layout class="mt-2" v-if="!loading">

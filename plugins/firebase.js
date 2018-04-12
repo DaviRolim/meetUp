@@ -1,8 +1,6 @@
 import Firebase from 'firebase'
 import Vue from 'vue'
 
-console.log(process.env)
-console.log(Vue.process)
 var config = {
   apiKey: process.env.API_KEY,
   authDomain: process.env.AUTH_DOMAIN,

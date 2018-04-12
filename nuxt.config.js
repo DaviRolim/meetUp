@@ -1,6 +1,5 @@
 const pkg = require('./package')
 require('dotenv').config()
-console.log(process.env)
 
 const nodeExternals = require('webpack-node-externals')
 
