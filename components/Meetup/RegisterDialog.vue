@@ -45,7 +45,11 @@
    },
    methods: {
      onAgree () {
-
+       if(this.userIsRegistered) {
+         this.$store.dispatch('meetup/unregisterUserForMeetup', this.meetupId)
+       } else {
+         this.$store.dispatch('meetup/registerUserForMeetup', this.meetupId)
+       }
      }
    }
   }

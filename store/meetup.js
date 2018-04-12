@@ -50,6 +50,20 @@ export const getters = {
 }
 
 export const mutations = {
+  registerUserForMeetup(state, payload) {
+    const id = payload.id
+    // Try to register for a meetup that you're already registered
+    if (state.user.registeredMeetups.findIndex(meetup => meetup.id === id) >= 0) {
+      return
+    }
+    state.user.registeredMeetups.push(id)
+    state.user.fbKeys[id] = payload.fbKey
+  },
+  unregisterUserForMeetup(state, payload) {
+    const registeredMeetups = state.user.registeredMeetups
+    registeredMeetups.splice(registeredMeetups.findIndex(meetup => meetup.id === payload), 1)
+    Reflect.deleteProperty(state.user.fbKeys, payload)
+  },  
   createMeetup(state, payload) {
     state.loadedMeetups.push(payload)
   },
@@ -66,7 +80,7 @@ export const mutations = {
     }
   },
   setUser(state, payload) {
-    state.user = payload
+    state.user = {...payload, fbKeys: {}}
   },
   setLoading(state, payload) {
     state.loading = payload
@@ -83,12 +97,38 @@ export const mutations = {
 }
 
 export const actions = {
-  registerUserForMeetup({ commit }, payload) {
+  registerUserForMeetup({ commit, getters }, payload) {
     commit('setLoading', true)
+    const user = getters.user
+    firebase.database().ref('/users/' + user.id).child('/registrations/')
+    .push(payload)
+    .then(data => {
+      commit('setLoading', false)
+      commit('registerUserForMeetup',{id: payload, fbKey: data.key})
+    })
+    .catch(error => {
+      commit('setLoading', false)
+      console.log(error)
+    })
 
   },
-  unregisterUserForMeetup({ commit }, payload) {
-
+  unregisterUserForMeetup({ commit, getters}, payload) {
+    commit('setLoading', true)
+    const user = getters.user
+    if(!user.fbKeys) {
+      return
+    }
+    const fbKey = user.fbKeys[payload]
+    firebase.database().ref('/users/' + user.id + '/registrations/').child(fbKey)
+    .remove()
+    .then(() => {
+      commit('setLoading', false)
+      commit('unregisterUserForMeetup', payload)
+    })
+    .catch(error => {
+      commit('setLoading', false)
+      console.log(error)
+    })
   },
   loadMeetups({ commit }) {
     commit('setLoading', true)
