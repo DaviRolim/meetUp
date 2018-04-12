@@ -55,13 +55,13 @@ export const mutations = {
   },
   updateMeetup(state, payload) {
     const meetup = state.loadedMeetups.find(meetup => meetup.id === payload.id)
-    if(payload.title) {
+    if (payload.title) {
       meetup.title = payload.title
     }
-    if(payload.description) {
+    if (payload.description) {
       meetup.description = payload.description
     }
-    if(payload.date) {
+    if (payload.date) {
       meetup.date = payload.date
     }
   },
@@ -83,6 +83,13 @@ export const mutations = {
 }
 
 export const actions = {
+  registerUserForMeetup({ commit }, payload) {
+    commit('setLoading', true)
+
+  },
+  unregisterUserForMeetup({ commit }, payload) {
+
+  },
   loadMeetups({ commit }) {
     commit('setLoading', true)
     firebase.database().ref('meetups').once('value')
@@ -137,27 +144,27 @@ export const actions = {
         console.log(error)
       })
   },
-  updateMeetupData({commit}, payload) {
+  updateMeetupData({ commit }, payload) {
     commit('setLoading', true)
     const updateObj = {}
-    if(payload.title) {
+    if (payload.title) {
       updateObj.title = payload.title
     }
-    if(payload.description) {
+    if (payload.description) {
       updateObj.description = payload.description
     }
-    if(payload.date) {
+    if (payload.date) {
       updateObj.date = payload.date
     }
     firebase.database().ref('meetups').child(payload.id).update(updateObj)
-    .then(() => {
-      commit('setLoading', false)
-      commit('updateMeetup', payload)
-    })
-    .catch(error => {
-      console.log(error)
-      commit('setLoading', false)
-    })
+      .then(() => {
+        commit('setLoading', false)
+        commit('updateMeetup', payload)
+      })
+      .catch(error => {
+        console.log(error)
+        commit('setLoading', false)
+      })
   },
   signUserUp({ commit }, payload) {
     commit('setLoading', true)
