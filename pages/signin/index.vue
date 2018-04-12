@@ -53,7 +53,7 @@
 </template>
 
 <script>
-import {mapActions, mapGetters} from 'vuex'
+import {mapActions} from 'vuex'
 export default {
   data () {
     return {
@@ -62,20 +62,15 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('meetup',[
-      'user',
-      'error',
-      'loading'
-    ])
-    // user (value) {
-    //   return this.$store.getters['meetup/user']
-    // },
-    // error () {
-    //   return this.$store.getters['meetup/error']
-    // },
-    // loading () {
-    //   return this.$store.getters['meetup/loading']
-    // }
+    user (value) {
+      return this.$store.getters['user/user']
+    },
+    error () {
+      return this.$store.getters.error
+    },
+    loading () {
+      return this.$store.getters.loading
+    }
   },
   watch: {
    user (value) {
@@ -85,14 +80,14 @@ export default {
     } 
   },
   methods: {
-    ...mapActions('meetup', [
+    ...mapActions('user', [
     'signUserIn'
     ]),
     onSignin () {
       this.signUserIn({email: this.email, password: this.password})
     },
     onDismissed () {
-      this.$store.dispatch('meetup/clearError')
+      this.$store.dispatch('clearError')
     }
   }
 }

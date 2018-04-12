@@ -40,15 +40,16 @@
    },
    computed: {
      userIsRegistered () {
-       return this.$store.getters['meetup/user'].registeredMeetups.findIndex(meetupId => meetupId === this.meetupId) >= 0
+       return this.$store.getters['user/user'].registeredMeetups.findIndex(meetupId => meetupId === this.meetupId) >= 0
      }
    },
    methods: {
      onAgree () {
+       this.dialog = false
        if(this.userIsRegistered) {
-         this.$store.dispatch('meetup/unregisterUserForMeetup', this.meetupId)
+         this.$store.dispatch('user/unregisterUserForMeetup', this.meetupId)
        } else {
-         this.$store.dispatch('meetup/registerUserForMeetup', this.meetupId)
+         this.$store.dispatch('user/registerUserForMeetup', this.meetupId)
        }
      }
    }

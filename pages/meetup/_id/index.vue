@@ -29,7 +29,7 @@
              </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <register-dialog :meetupId="meetup.id"></register-dialog>
+            <register-dialog :meetupId="meetup.id" v-if="userIsAuthenticated && !userIsCreator"></register-dialog>
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -51,13 +51,13 @@ export default {
       return this.$store.getters['meetup/getLoadedMeetup'](this.$route.params.id)
     },
     userIsAuthenticated () {
-      return this.$store.getters['meetup/user'] !== null && this.$store.getters['meetup/user'] !== undefined
+      return this.$store.getters['user/user'] !== null && this.$store.getters['user/user'] !== undefined
     },
     userIsCreator () {
       if (!this.userIsAuthenticated) {
         return false;
       }
-    return this.$store.getters['meetup/user'].id === this.meetup.creatorId
+    return this.$store.getters['user/user'].id === this.meetup.creatorId
     }
   }
 }

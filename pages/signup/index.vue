@@ -78,13 +78,13 @@ export default {
       return this.password !== this.confirmPassword ? 'Passwords do not match' : true
     },
     user (value) {
-      return this.$store.getters['meetup/user']
+      return this.$store.getters['user/user']
     },
     error () {
-      return this.$store.getters['meetup/error']
+      return this.$store.getters.error
     },
     loading () {
-      return this.$store.getters['meetup/loading']
+      return this.$store.getters.loading
     }
   },
   watch: {
@@ -95,7 +95,7 @@ export default {
     } 
   },
   methods: {
-    ...mapActions('meetup', [
+    ...mapActions('user', [
     'signUserUp'
     ]),
     onSignup () {
@@ -103,7 +103,7 @@ export default {
       this.signUserUp({email: this.email, password: this.password})
     },
     onDismissed () {
-      this.$store.dispatch('meetup/clearError')
+      this.$store.dispatch('clearError')
     }
   }
 }

@@ -64,23 +64,21 @@
         return menuItems
       },
     userIsAuthenticated () {
-      return this.$store.getters['meetup/user'] !== null && this.$store.getters['meetup/user'] !== undefined
+      return this.$store.getters['user/user'] !== null && this.$store.getters['user/user'] !== undefined
     }
     },
     created () {
       this.$auth.onAuthStateChanged((user) => {
         if(user) {
-          this.$store.dispatch('meetup/autoSignin', user)
+          this.$store.dispatch('user/autoSignin', user)
+          this.$store.dispatch('user/fetchUserData')
         }
       })
       this.$store.dispatch('meetup/loadMeetups')
-      console.log(this)
-      console.log(this.context)
-      console.log(this.process)
     },
     methods: {
       onLogout () {
-        this.$store.dispatch('meetup/logout')
+        this.$store.dispatch('user/logout')
         this.$router.push('/signin')
       }
     }
